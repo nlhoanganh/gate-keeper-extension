@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Extension</title>
+  <style>
+    body {
+      width: 200px;
+      padding: 10px;
+      font-family: Arial, sans-serif;
+    }
+    button {
+      padding: 8px 12px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    canvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div class="hidden">
+    <img
+      id="source"
+      src="https://mdn.github.io/shared-assets/images/examples/rhino.jpg"
+      width="300"
+      height="227"
+      crossorigin="anonymous" />
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
