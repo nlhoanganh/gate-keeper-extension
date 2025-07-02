@@ -4,18 +4,18 @@
     let video = document.createElement("video");
     let button = document.createElement("button");
     let canvas = document.createElement("canvas");
+    let buttonVerify = document.createElement("button");
 
     video.setAttribute("width", 500);
     video.setAttribute("height", 400);
 
     button.innerText = 'Capture';
-    button.addEventListener('click', async function capture() {
-         const base64Faces = await recordFaces();
-        sendTrainingRequest(id, name, base64Faces);
-    })
+    buttonVerify.innerText = 'Verify';
+
 
     document.body.append(video)
     document.body.append(button)
+    document.body.append(buttonVerify)
     document.body.append(canvas)
 
     canvas.width = video.width;
@@ -23,7 +23,8 @@
 
     // video.setAttribute('style', 'display: none')
     // canvas.setAttribute('style', 'display: none')   
-    button.setAttribute('id', 'capture')   
+    button.setAttribute('id', 'capture')
+    buttonVerify.setAttribute('id', 'verify')
 
 
     navigator.mediaDevices
@@ -38,10 +39,18 @@
         console.error(`An error occurred: ${err}`);
     });
 
-    async function recordFaces() {
+    button.addEventListener('click', async function capture() {
+        const base64Faces = await recordFaces(50, 2000);
+        sendTrainingRequest(id, name, base64Faces);
+    })
+
+    buttonVerify.addEventListener('click', async function capture() {
+        const base64Faces = await recordFaces(15, 500);
+        sendVerifyFacesRequest(base64Faces);
+    })
+
+    async function recordFaces(captureCount, totalTime) {
         const images = [];
-        const captureCount = 15;
-        const totalTime = 2000; // 2 seconds in ms
         const interval = totalTime / captureCount;
         const context = canvas.getContext("2d");
     // Capture images at regular intervals
@@ -74,7 +83,22 @@
                 "Content-type": "application/json; charset=UTF-8"
             }
         })
-        .then((response) => console.log(response.json()))
+        .then((response) => console.log(response))
         .then((json) => console.log(json));
+    }
+
+    async function sendVerifyFacesRequest(faces) {
+        const response = await fetch("http://localhost:8080/face-regconition/verify", {
+            method: "POST",
+            body: JSON.stringify({
+                base64Faces: faces
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
+
+        const name = await response.text();
+        alert(name)
     }
 })();
